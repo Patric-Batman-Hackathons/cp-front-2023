@@ -1,17 +1,20 @@
 <template>
   <div class="main-container">
     <div class="content-container">
-      <img
-        v-if="lastUploadedImageURL"
-        :src="lastUploadedImageURL"
-        alt="Image"
-        class="image"
-      />
+      <img v-if="lastUploadedImageURL" :src="lastUploadedImageURL" alt="Image" class="image" />
       <div class="buttons grid grid-cols-2 gap-4">
         <el-button type="success" class="button" @click="selectFile()">Upload Sample</el-button>
-        <el-button type="primary" class="button">Download Result</el-button>
+        <el-button type="primary" class="button" @click="galleryVisible = true"
+          >Open Gallery</el-button
+        >
       </div>
     </div>
+    <!-- Poppers -->
+    <GalleryModal
+      v-model="galleryVisible"
+      :uploadedImages="uploadedImages"
+      @select="onSelectImage($event)"
+    />
   </div>
 </template>
 
@@ -26,11 +29,17 @@ const fileInput = ref<HTMLInputElement>(document.createElement('input'))
 const uploadedImages = ref<ImagesGet>([])
 const imageLoading = ref<any | undefined>(undefined)
 const uploadCheckInterval = ref<number | undefined>(undefined)
+const galleryVisible = ref(false)
+const selectedImageURL = ref<string | undefined>(undefined)
 
 const baseURL = import.meta.env.VITE_API_HOST
 const axios: any = inject('axios')
 
 const lastUploadedImageURL = computed(() => {
+  if (selectedImageURL.value) {
+    return selectedImageURL.value
+  }
+
   const length = uploadedImages.value.length
   if (!length) {
     return undefined
@@ -93,9 +102,18 @@ function clearCheckUnterval() {
   if (imageLoading.value) {
     imageLoading.value.close()
   }
+
+  if (selectedImageURL.value) {
+    selectedImageURL.value = undefined
+  }
+
   if (uploadCheckInterval.value) {
     clearInterval(uploadCheckInterval.value)
   }
+}
+
+function onSelectImage(event: any) {
+  selectedImageURL.value = `${baseURL}back-bridge/image/get/${event.value}`
 }
 
 watch(imagesLength, () => {
