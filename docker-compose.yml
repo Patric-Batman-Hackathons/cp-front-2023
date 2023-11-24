@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  lct-front-2023:
+    image: sxhornet/cp-front-2023
+    restart: always
+    # env_file: 
+    #   - .env
+    ports:
+      - '80:80'
+      - '443:443'
