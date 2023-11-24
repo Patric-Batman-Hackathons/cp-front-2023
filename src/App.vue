@@ -80,6 +80,12 @@ function uploadFile(file: File) {
   const bodyFormData = new FormData()
   bodyFormData.append('photo', file)
   bodyFormData.append('title', uuidv4())
+  imageLoading.value = ElLoading.service({
+    lock: true,
+    text: 'Image uploading...',
+    background: 'rgba(0, 0, 0, 0.7)',
+    spinner: loader
+  })
   axios
     .post(baseURL + 'back-bridge/image/post/', bodyFormData)
     .then(() => {
@@ -88,6 +94,8 @@ function uploadFile(file: File) {
         message: 'Image uploaded'
       })
 
+      imageLoading.value.close();
+
       startImagesCheck()
     })
     .catch(() => {
@@ -95,6 +103,10 @@ function uploadFile(file: File) {
         type: 'error',
         message: 'Image was not uploaded'
       })
+
+      if (imageLoading.value.close()) {
+        imageLoading.value.close();
+      }
     })
 }
 

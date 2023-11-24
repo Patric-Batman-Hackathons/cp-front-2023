@@ -9,9 +9,9 @@ ENV VITE_API_HOST=http://0.0.0.0:8000/
 
 FROM nginx:stable-alpine as production-stage
 
-# RUN rm -rf /etc/nginx/conf.d/*
-# COPY configs/nginx/conf.d/ /etc/nginx/conf.d/
-# COPY configs/nginx/nginx.conf /etc/nginx/nginx.conf
+RUN rm -rf /etc/nginx/conf.d/*
+COPY configs/nginx/conf.d/ /etc/nginx/conf.d/
+COPY configs/nginx/nginx.conf /etc/nginx/nginx.conf
 # COPY configs/nginx/ssl/ /etc/nginx/ssl/
 
 COPY --from=build-stage /app/dist /usr/share/nginx/html
